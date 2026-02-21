@@ -3,389 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Прототип бота «Система дохода для косметолога»</title>
-    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.development.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
-    <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+    <title>Структура бота «Система дохода для косметолога»</title>
+    <!-- Mermaid для диаграмм -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
     <style>
         body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
             margin: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #e2e8f0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 16px;
-            box-sizing: border-box;
+            padding: 20px;
+            color: #2c3e50;
         }
-        * { box-sizing: border-box; }
-        .screen {
-            display: flex;
-            flex-direction: column;
-            height: 600px;
-            background: #f8fafc;
-            max-width: 400px;
-            width: 100%;
-            overflow: hidden;
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
-            border-radius: 24px;
-            border: 1px solid #e2e8f0;
-        }
-        .header {
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
             background: white;
-            padding: 16px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            align-items: center;
-            gap: 12px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
         }
-        .header-icon {
-            background: #eef2ff;
-            border-radius: 10px;
-            padding: 8px;
-            color: #4f46e5;
-            font-size: 20px;
-            line-height: 1;
+        h1 {
+            text-align: center;
+            color: #1e3c5c;
+            margin-top: 0;
+            font-weight: 600;
+            font-size: 2.2em;
         }
-        .header-title {
-            font-weight: bold;
-            color: #1e293b;
-            font-size: 14px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .subtitle {
+            text-align: center;
+            color: #4a6fa5;
+            margin-bottom: 30px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #e0e7ef;
+            padding-bottom: 15px;
         }
-        .content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-        }
-        button {
-            width: 100%;
-            padding: 16px;
-            border-radius: 12px;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        button.primary {
-            background: #4f46e5;
-            color: white;
-            box-shadow: 0 4px 6px -1px rgb(79 70 229 / 0.3);
-        }
-        button.primary:hover {
-            background: #4338ca;
-        }
-        button.secondary {
-            background: white;
-            border: 1px solid #e2e8f0;
-            color: #475569;
-        }
-        button.secondary:hover {
-            background: #f1f5f9;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 999px;
-            margin-bottom: 20px;
-        }
-        .progress-fill {
-            height: 6px;
-            background: #4f46e5;
-            border-radius: 999px;
-            transition: width 0.5s;
-        }
-        .card {
-            background: white;
+        .diagram-container {
+            background: #ffffff;
             border-radius: 16px;
             padding: 20px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.02);
+            overflow-x: auto;
+            margin-bottom: 30px;
         }
-        .badge {
-            background: #eef2ff;
-            color: #4f46e5;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 500;
-            display: inline-block;
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+            background: #f8fafd;
+            padding: 15px;
+            border-radius: 40px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 6px;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        .note {
+            background: #eef6ff;
+            border-left: 5px solid #3498db;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin: 25px 0 10px;
+        }
+        .note strong {
+            color: #1e3c5c;
         }
     </style>
 </head>
 <body>
-    <div id="root"></div>
+<div class="container">
+    <h1>🤖 Структура Telegram‑бота</h1>
+    <div class="subtitle">«Система дохода для косметолога» — логика диагностики, персонализации и записи</div>
 
-    <script type="text/babel">
-        function App() {
-            const [step, setStep] = React.useState('agreement');
-            const [diagStep, setDiagStep] = React.useState(0);
-            const [answers, setAnswers] = React.useState({});
-            const [calculation, setCalculation] = React.useState({ current: 0, potential: 0, loss: 0 });
+    <div class="diagram-container">
+        <pre class="mermaid" style="min-width: 900px; min-height: 650px;">
+flowchart TD
+    Start([/start]) --> Consent{Согласие на обработку данных}
+    Consent -->|Согласен| Diag[Мини-диагностика]
+    Consent -->|Политика| Policy[Показ ссылки] --> Consent
+    
+    subgraph Диагностика
+        Diag --> Q1[Вопрос 1: Роль]
+        Q1 --> Q2[Вопрос 2: Клиентов/мес]
+        Q2 --> Q3[Вопрос 3: Средний чек]
+        Q3 --> Q4[Вопрос 4: Проблема]
+        Q4 --> Q5[Вопрос 5: Учёт]
+    end
 
-            const questions = [
-                {
-                    id: 'role',
-                    text: 'Ваша текущая роль?',
-                    options: [
-                        { label: 'Частный мастер', tag: 'role_solo' },
-                        { label: 'Владелец студии', tag: 'role_owner' },
-                        { label: 'Работаю в найме', tag: 'role_employee' }
-                    ]
-                },
-                {
-                    id: 'clients',
-                    text: 'Сколько клиентов вы принимаете в среднем в месяц?',
-                    options: [
-                        { label: 'До 20', tag: 'clients_low', val: 15 },
-                        { label: '20–40', tag: 'clients_mid', val: 30 },
-                        { label: '40–60', tag: 'clients_high', val: 50 },
-                        { label: 'Более 60', tag: 'clients_pro', val: 80 }
-                    ]
-                },
-                {
-                    id: 'check',
-                    text: 'Ваш средний чек?',
-                    options: [
-                        { label: 'До 3 000', tag: 'check_low', val: 2500 },
-                        { label: '3 000–6 000', tag: 'check_mid', val: 4500 },
-                        { label: '6 000–10 000', tag: 'check_high', val: 8000 },
-                        { label: 'Более 10 000', tag: 'check_pro', val: 12000 }
-                    ]
-                },
-                {
-                    id: 'problem',
-                    text: 'Что сейчас больше всего тормозит рост?',
-                    options: [
-                        { label: 'Нестабильность записи', tag: 'problem_unstable' },
-                        { label: 'Нет возврата клиентов', tag: 'problem_retention' },
-                        { label: 'Страх поднять цены', tag: 'problem_price' },
-                        { label: 'Выгорание', tag: 'problem_burnout' },
-                        { label: 'Хаос в учете', tag: 'problem_chaos' }
-                    ]
-                },
-                {
-                    id: 'system',
-                    text: 'Как сейчас ведёте учет?',
-                    options: [
-                        { label: 'Блокнот', tag: 'system_paper' },
-                        { label: 'Таблицы', tag: 'system_excel' },
-                        { label: 'CRM как календарь', tag: 'system_basic' },
-                        { label: 'Полноценная система', tag: 'system_full' }
-                    ]
-                }
-            ];
+    Q5 --> Calc[Оцифровка: расчёт оборота и потенциала]
+    Calc --> Personal[Персонализированное сообщение<br>в зависимости от проблемы]
+    Personal --> Content[Контентный блок: видео/текст]
+    Content --> Filter{Готовность внедрять систему?}
 
-            const handleAnswer = (option) => {
-                const newAnswers = { ...answers, [questions[diagStep].id]: option };
-                setAnswers(newAnswers);
+    Filter -->|Да| Appointment[Приглашение на стратегическую диагностику]
+    Filter -->|Пока изучаю| Soft[Мягкий контентный поток<br>→ подписка / прогрев]
 
-                if (diagStep < questions.length - 1) {
-                    setDiagStep(diagStep + 1);
-                } else {
-                    processDiagnostic(newAnswers);
-                }
-            };
+    Appointment --> Contact[Запрос контакта через Telegram]
+    Contact -->|Отправить телефон| CRM[Передача в CRM / Google Sheets]
+    CRM --> Bonus[Бонус: чек-лист + ДЗ]
+    Bonus --> End([Конец диагностики])
 
-            const processDiagnostic = (data) => {
-                const clients = data.clients?.val || 30;
-                const check = data.check?.val || 4500;
-                const currentRevenue = clients * check;
-                const potentialRevenue = Math.round(currentRevenue * 1.4);
-                const loss = potentialRevenue - currentRevenue;
+    Soft --> End
 
-                setCalculation({
-                    current: currentRevenue.toLocaleString(),
-                    potential: potentialRevenue.toLocaleString(),
-                    loss: loss.toLocaleString()
-                });
+    %% Напоминания (автоматические, фоновые)
+    Remind1[Через 2 часа: не начал диагностику] -.-> Start
+    Remind2[Через 12 часов: не прошёл до конца] -.-> Diag
+    Remind3[Через 24 часа: не оставил контакт] -.-> Appointment
 
-                setStep('calculation');
-            };
+    %% Стили
+    classDef default fill:#f9f9f9,stroke:#2c3e50,stroke-width:2px;
+    classDef decision fill:#f1c40f,stroke:#e67e22,stroke-width:2px;
+    classDef process fill:#3498db,stroke:#2980b9,stroke-width:2px,color:white;
+    classDef reminder fill:#e74c3c,stroke:#c0392b,stroke-width:1px,stroke-dasharray: 5 5,color:white;
+    class Consent,Filter decision;
+    class Diag,Q1,Q2,Q3,Q4,Q5,Calc,Personal,Content,Appointment,Contact,CRM,Bonus process;
+    class Remind1,Remind2,Remind3 reminder;
+        </pre>
+    </div>
 
-            const getProblemText = () => {
-                const prob = answers.problem?.tag;
-                if (prob === 'problem_retention') return "Основная точка роста — система удержания. Без неё даже сильный поток клиентов не создаёт стабильности.";
-                if (prob === 'problem_price') return "Рост дохода невозможен без работы с позиционированием и ценностью. Страх мешает вам забирать свои деньги.";
-                if (prob === 'problem_unstable') return "Хаос в записи — это отсутствие управляемого маркетинга. Система сделает поток клиентов прогнозируемым.";
-                return "Ваш текущий подход требует оцифровки. Только понимая цифры, можно управлять результатом.";
-            };
+    <div class="legend">
+        <div class="legend-item"><span class="legend-color" style="background:#3498db;"></span> Основные этапы</div>
+        <div class="legend-item"><span class="legend-color" style="background:#f1c40f;"></span> Точки выбора / фильтр</div>
+        <div class="legend-item"><span class="legend-color" style="background:#e74c3c; border:1px dashed #c0392b;"></span> Автоматические напоминания</div>
+    </div>
 
-            // Обработчик для кнопки политики конфиденциальности
-            const openPrivacyPolicy = () => {
-                window.open('https://example.com/privacy', '_blank'); // замените на реальную ссылку
-            };
+    <div class="note">
+        <strong>📌 Ключевые особенности:</strong>
+        <ul style="margin:8px 0 0 20px;">
+            <li>Перед диагностикой обязательное согласие с политикой.</li>
+            <li>На основе ответов рассчитывается примерный оборот и потенциал роста.</li>
+            <li>Персонализация под главную проблему пользователя.</li>
+            <li>Фильтр «готовность» отделяет тёплых лидов.</li>
+            <li>После отправки контакта выдаётся чек-лист и домашнее задание для подготовки к созвону.</li>
+            <li>Все данные (роль, клиенты, чек, проблема, учёт, телефон) передаются в CRM/Google Sheets.</li>
+        </ul>
+    </div>
 
-            // Универсальная обёртка экрана (без иконок, используем эмодзи)
-            const ScreenWrapper = ({ title, emoji, children }) => (
-                <div className="screen">
-                    <div className="header">
-                        <span className="header-icon">{emoji || '📋'}</span>
-                        <span className="header-title">{title || "Валерий | Система Дохода"}</span>
-                    </div>
-                    <div className="content">
-                        {children}
-                    </div>
-                </div>
-            );
+    <div class="footer">
+        ⚙️ Техническая реализация: aiogram 3, SQLite, APScheduler, JSON-файл с текстами, интеграция с Google Sheets.<br>
+        ✨ Редактирование текстов и таймеров без перепрошивки.
+    </div>
+</div>
 
-            return (
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
-                    {/* Согласие */}
-                    {step === 'agreement' && (
-                        <ScreenWrapper title="Юридическая часть" emoji="⚖️">
-                            <div style={{ background: '#4f46e5', color: 'white', padding: '24px', borderRadius: '16px', marginBottom: '8px' }}>
-                                <h2 style={{ fontSize: '20px', fontWeight: 'bold', marginBottom: '8px' }}>Начнем правильно</h2>
-                                <p style={{ opacity: 0.9, fontSize: '14px' }}>Продолжая, вы соглашаетесь на обработку персональных данных и получение материалов.</p>
-                            </div>
-                            <button className="primary" onClick={() => setStep('welcome')}>
-                                Согласен(на)
-                            </button>
-                            <button className="secondary" onClick={openPrivacyPolicy} style={{ marginTop: '8px' }}>
-                                Политика конфиденциальности
-                            </button>
-                        </ScreenWrapper>
-                    )}
-
-                    {/* Приветствие */}
-                    {step === 'welcome' && (
-                        <ScreenWrapper title="Приветствие" emoji="👋">
-                            <div className="card">
-                                <p style={{ marginBottom: '12px' }}>Привет. Я <strong>Валерий</strong>.</p>
-                                <p style={{ color: '#475569', lineHeight: 1.6 }}>Помогаю косметологам выстраивать систему дохода, чтобы бизнес перестал зависеть от настроения клиентов и алгоритмов соцсетей.</p>
-                            </div>
-                            <div style={{ background: '#eef2ff', padding: '16px', borderRadius: '12px', border: '1px solid #c7d2fe' }}>
-                                <p style={{ color: '#4338ca', fontStyle: 'italic', fontSize: '14px' }}>⏱ За 2–3 минуты покажу, где именно в вашем бизнесе теряются деньги.</p>
-                            </div>
-                            <button className="primary" onClick={() => setStep('diagnostic')}>
-                                Пройти мини-диагностику →
-                            </button>
-                        </ScreenWrapper>
-                    )}
-
-                    {/* Диагностика */}
-                    {step === 'diagnostic' && (
-                        <ScreenWrapper title={`Вопрос ${diagStep + 1} из 5`} emoji="❓">
-                            <div className="progress-bar">
-                                <div className="progress-fill" style={{ width: `${((diagStep + 1) / questions.length) * 100}%` }}></div>
-                            </div>
-                            <h2 style={{ fontSize: '18px', fontWeight: 'bold', marginBottom: '20px' }}>{questions[diagStep].text}</h2>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                {questions[diagStep].options.map((opt, i) => (
-                                    <button
-                                        key={i}
-                                        onClick={() => handleAnswer(opt)}
-                                        style={{
-                                            width: '100%',
-                                            textAlign: 'left',
-                                            padding: '16px',
-                                            borderRadius: '12px',
-                                            border: '2px solid #e2e8f0',
-                                            background: 'white',
-                                            fontSize: '16px',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            e.currentTarget.style.borderColor = '#818cf8';
-                                            e.currentTarget.style.background = '#eef2ff';
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            e.currentTarget.style.borderColor = '#e2e8f0';
-                                            e.currentTarget.style.background = 'white';
-                                        }}
-                                    >
-                                        {opt.label}
-                                    </button>
-                                ))}
-                            </div>
-                        </ScreenWrapper>
-                    )}
-
-                    {/* Расчёт */}
-                    {step === 'calculation' && (
-                        <ScreenWrapper title="Ваш результат" emoji="📊">
-                            <div style={{ background: '#0f172a', color: 'white', padding: '24px', borderRadius: '24px' }}>
-                                <p style={{ color: '#94a3b8', fontSize: '12px', textTransform: 'uppercase', letterSpacing: '1px' }}>Текущий оборот</p>
-                                <div style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '16px' }}>{calculation.current} ₽ <span style={{ fontSize: '14px', color: '#64748b' }}>/мес</span></div>
-                                <div style={{ height: '1px', background: '#334155', margin: '16px 0' }}></div>
-                                <p style={{ color: '#818cf8', fontSize: '12px', textTransform: 'uppercase' }}>Потенциал роста</p>
-                                <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#4ade80' }}>+{calculation.loss} ₽</div>
-                                <p style={{ color: '#94a3b8', fontSize: '12px', marginTop: '4px' }}>Это деньги, которые вы теряете без системы</p>
-                            </div>
-
-                            <div className="card">
-                                <p style={{ fontSize: '15px', color: '#334155' }}>{getProblemText()}</p>
-                            </div>
-
-                            <div style={{ background: '#fffbeb', padding: '16px', borderRadius: '12px', border: '1px solid #fcd34d', display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-                                <span style={{ fontSize: '24px' }}>📹</span>
-                                <div>
-                                    <p style={{ fontWeight: 'bold', color: '#92400e' }}>Разбор системы</p>
-                                    <p style={{ fontSize: '12px', color: '#b45309' }}>Я подготовил короткое видео, где объясняю, как из хаоса выстраивается система.</p>
-                                </div>
-                            </div>
-
-                            <button className="primary" onClick={() => setStep('filter')}>
-                                Посмотреть разбор
-                            </button>
-                        </ScreenWrapper>
-                    )}
-
-                    {/* Фильтр готовности */}
-                    {step === 'filter' && (
-                        <ScreenWrapper title="Проверка готовности" emoji="🔍">
-                            <h2 style={{ fontSize: '18px', fontWeight: 'bold' }}>Системный рост требует внедрения.</h2>
-                            <p style={{ color: '#475569' }}>Готовы ли вы:</p>
-                            <ul style={{ listStyle: 'none', padding: 0, margin: '16px 0', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                                <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>✅ Считать цифры</li>
-                                <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>✅ Внедрять изменения 3–4 недели</li>
-                                <li style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>✅ Работать с процессами</li>
-                            </ul>
-                            <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                                <button className="primary" onClick={() => setStep('strategy')}>
-                                    Да, готов(а)
-                                </button>
-                                <button className="secondary" onClick={() => setStep('finish_later')}>
-                                    Пока изучаю
-                                </button>
-                            </div>
-                        </ScreenWrapper>
-                    )}
-
-                    {/* Стратегическая диагностика */}
-                    {step === 'strategy' && (
-                        <ScreenWrapper title="Приглашение" emoji="📅">
-                            <div style={{ background: '#eef2ff', padding: '24px', borderRadius: '16px', border: '1px solid #c7d2fe' }}>
-                                <h2 style={{ color: '#312e81', fontWeight: 'bold', marginBottom: '8px' }}>Вижу потенциал роста</h2>
-                                <p style={{ color: '#4338ca', fontSize: '14px' }}>Предлагаю провести 15–20 минутную стратегическую диагностику в Zoom. Разберём вашу ситуацию детально.</p>
-                            </div>
-                            <div style={{ textAlign: 'center', marginTop: '20px' }}>
-                                <p style={{ fontSize: '12px', color: '#64748b', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '12px' }}>Оставьте контакт для связи</p>
-                                <button className="primary" onClick={() => setStep('finish')} style={{ background: '#059669' }}>
-                                    📞 Отправить контакт
-                                </button>
-                            </div>
-                        </ScreenWrapper>
-                    )}
-
-                    {/* Финиш */}
-                    {step === 'finish' && (
-                        <ScreenWrapper title="Успешно" emoji="✅">
-                            <div style={{ textAlign: 'center', paddingTop: '20px' }}>
-                                <div style={{ width: '80px', height: '80px', background: '#dcfce7', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px', fontSize: '40px' }}>
-                                    ✅
-                                </div>
-                                <h2 style={{ fontSize: '24px', fontWeight: 'bold' }}>Контакт получен!</h2>
-                                <p style={{ color: '#64748b', marginTop: '8px' }}>Скоро свяжусь с вами для назначения Zoom.</p>
-
-                                <div className="card" style={{ marginTop: '24px', textAlign: 'left' }}>
-                                    <p style={{ fontSize: '12px', fontWeight: 'bold', color: '#4f46e5', textTransform: 'uppercase' }}>Ваш бонус:</p>
-                                    <p style={{ fontWeight: '500' }}>🎁 Чек-лист «Контроль системы дохода косметолога»</p>
-                                </d
+<script>
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: 'neutral',
+        flowchart: {
+            useMaxWidth: false,
+            htmlLabels: true,
+            curve: 'basis'
+        },
+        securityLevel: 'loose',
+    });
+</script>
+</body>
+</html>
