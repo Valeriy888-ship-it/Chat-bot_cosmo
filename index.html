@@ -3,173 +3,348 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Структура бота «Система дохода для косметолога»</title>
-    <!-- Mermaid для диаграмм -->
-    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <title>Прототип бота «Система дохода для косметолога»</title>
+    <!-- Подключаем React и ReactDOM через CDN -->
+    <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <!-- Babel для JSX в браузере -->
+    <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+    <!-- Lucide React (глобальная переменная LucideReact) -->
+    <script src="https://cdn.jsdelivr.net/npm/lucide-react@0.263.1/dist/umd/lucide-react.min.js"></script>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
             margin: 0;
-            padding: 20px;
-            color: #2c3e50;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 30px;
-        }
-        h1 {
-            text-align: center;
-            color: #1e3c5c;
-            margin-top: 0;
-            font-weight: 600;
-            font-size: 2.2em;
-        }
-        .subtitle {
-            text-align: center;
-            color: #4a6fa5;
-            margin-bottom: 30px;
-            font-size: 1.2em;
-            border-bottom: 2px solid #e0e7ef;
-            padding-bottom: 15px;
-        }
-        .diagram-container {
-            background: #ffffff;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: inset 0 2px 8px rgba(0,0,0,0.02);
-            overflow-x: auto;
-            margin-bottom: 30px;
-        }
-        .legend {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #e2e8f0;
             display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
             justify-content: center;
-            margin-top: 20px;
-            background: #f8fafd;
-            padding: 15px;
-            border-radius: 40px;
-        }
-        .legend-item {
-            display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 0.95em;
+            min-height: 100vh;
+            padding: 16px;
+            box-sizing: border-box;
         }
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 6px;
-        }
-        .footer {
-            text-align: center;
-            margin-top: 30px;
-            color: #7f8c8d;
-            font-size: 0.9em;
-        }
-        .note {
-            background: #eef6ff;
-            border-left: 5px solid #3498db;
-            padding: 15px 20px;
-            border-radius: 12px;
-            margin: 25px 0 10px;
-        }
-        .note strong {
-            color: #1e3c5c;
+        * {
+            box-sizing: border-box;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <h1>🤖 Структура Telegram‑бота</h1>
-    <div class="subtitle">«Система дохода для косметолога» — логика диагностики, персонализации и записи</div>
+    <div id="root"></div>
 
-    <div class="diagram-container">
-        <pre class="mermaid" style="min-width: 900px; min-height: 650px;">
-flowchart TD
-    Start([/start]) --> Consent{Согласие на обработку данных}
-    Consent -->|Согласен| Diag[Мини-диагностика]
-    Consent -->|Политика| Policy[Показ ссылки] --> Consent
-    
-    subgraph Диагностика
-        Diag --> Q1[Вопрос 1: Роль]
-        Q1 --> Q2[Вопрос 2: Клиентов/мес]
-        Q2 --> Q3[Вопрос 3: Средний чек]
-        Q3 --> Q4[Вопрос 4: Проблема]
-        Q4 --> Q5[Вопрос 5: Учёт]
-    end
+    <script type="text/babel">
+        // Извлекаем компоненты иконок из глобальной переменной LucideReact
+        const { 
+            Send, ChevronRight, Calculator, ShieldCheck, 
+            MessageSquare, UserCheck, Phone, Layout, BarChart3, Video 
+        } = LucideReact;
 
-    Q5 --> Calc[Оцифровка: расчёт оборота и потенциала]
-    Calc --> Personal[Персонализированное сообщение<br>в зависимости от проблемы]
-    Personal --> Content[Контентный блок: видео/текст]
-    Content --> Filter{Готовность внедрять систему?}
+        function App() {
+            const [step, setStep] = React.useState('agreement');
+            const [diagStep, setDiagStep] = React.useState(0);
+            const [answers, setAnswers] = React.useState({});
+            const [calculation, setCalculation] = React.useState({ current: 0, potential: 0, loss: 0 });
 
-    Filter -->|Да| Appointment[Приглашение на стратегическую диагностику]
-    Filter -->|Пока изучаю| Soft[Мягкий контентный поток<br>→ подписка / прогрев]
+            const questions = [
+                {
+                    id: 'role',
+                    text: 'Ваша текущая роль?',
+                    options: [
+                        { label: 'Частный мастер', tag: 'role_solo' },
+                        { label: 'Владелец студии', tag: 'role_owner' },
+                        { label: 'Работаю в найме', tag: 'role_employee' }
+                    ]
+                },
+                {
+                    id: 'clients',
+                    text: 'Сколько клиентов вы принимаете в среднем в месяц?',
+                    options: [
+                        { label: 'До 20', tag: 'clients_low', val: 15 },
+                        { label: '20–40', tag: 'clients_mid', val: 30 },
+                        { label: '40–60', tag: 'clients_high', val: 50 },
+                        { label: 'Более 60', tag: 'clients_pro', val: 80 }
+                    ]
+                },
+                {
+                    id: 'check',
+                    text: 'Ваш средний чек?',
+                    options: [
+                        { label: 'До 3 000', tag: 'check_low', val: 2500 },
+                        { label: '3 000–6 000', tag: 'check_mid', val: 4500 },
+                        { label: '6 000–10 000', tag: 'check_high', val: 8000 },
+                        { label: 'Более 10 000', tag: 'check_pro', val: 12000 }
+                    ]
+                },
+                {
+                    id: 'problem',
+                    text: 'Что сейчас больше всего тормозит рост?',
+                    options: [
+                        { label: 'Нестабильность записи', tag: 'problem_unstable' },
+                        { label: 'Нет возврата клиентов', tag: 'problem_retention' },
+                        { label: 'Страх поднять цены', tag: 'problem_price' },
+                        { label: 'Выгорание', tag: 'problem_burnout' },
+                        { label: 'Хаос в учете', tag: 'problem_chaos' }
+                    ]
+                },
+                {
+                    id: 'system',
+                    text: 'Как сейчас ведёте учет?',
+                    options: [
+                        { label: 'Блокнот', tag: 'system_paper' },
+                        { label: 'Таблицы', tag: 'system_excel' },
+                        { label: 'CRM как календарь', tag: 'system_basic' },
+                        { label: 'Полноценная система', tag: 'system_full' }
+                    ]
+                }
+            ];
 
-    Appointment --> Contact[Запрос контакта через Telegram]
-    Contact -->|Отправить телефон| CRM[Передача в CRM / Google Sheets]
-    CRM --> Bonus[Бонус: чек-лист + ДЗ]
-    Bonus --> End([Конец диагностики])
+            const handleAnswer = (option) => {
+                const newAnswers = { ...answers, [questions[diagStep].id]: option };
+                setAnswers(newAnswers);
 
-    Soft --> End
+                if (diagStep < questions.length - 1) {
+                    setDiagStep(diagStep + 1);
+                } else {
+                    processDiagnostic(newAnswers);
+                }
+            };
 
-    %% Напоминания (автоматические, фоновые)
-    Remind1[Через 2 часа: не начал диагностику] -.-> Start
-    Remind2[Через 12 часов: не прошёл до конца] -.-> Diag
-    Remind3[Через 24 часа: не оставил контакт] -.-> Appointment
+            const processDiagnostic = (data) => {
+                const clients = data.clients?.val || 30;
+                const check = data.check?.val || 4500;
+                const currentRevenue = clients * check;
+                const potentialRevenue = Math.round(currentRevenue * 1.4);
+                const loss = potentialRevenue - currentRevenue;
 
-    %% Стили
-    classDef default fill:#f9f9f9,stroke:#2c3e50,stroke-width:2px;
-    classDef decision fill:#f1c40f,stroke:#e67e22,stroke-width:2px;
-    classDef process fill:#3498db,stroke:#2980b9,stroke-width:2px,color:white;
-    classDef reminder fill:#e74c3c,stroke:#c0392b,stroke-width:1px,stroke-dasharray: 5 5,color:white;
-    class Consent,Filter decision;
-    class Diag,Q1,Q2,Q3,Q4,Q5,Calc,Personal,Content,Appointment,Contact,CRM,Bonus process;
-    class Remind1,Remind2,Remind3 reminder;
-        </pre>
-    </div>
+                setCalculation({
+                    current: currentRevenue.toLocaleString(),
+                    potential: potentialRevenue.toLocaleString(),
+                    loss: loss.toLocaleString()
+                });
 
-    <div class="legend">
-        <div class="legend-item"><span class="legend-color" style="background:#3498db;"></span> Основные этапы</div>
-        <div class="legend-item"><span class="legend-color" style="background:#f1c40f;"></span> Точки выбора / фильтр</div>
-        <div class="legend-item"><span class="legend-color" style="background:#e74c3c; border:1px dashed #c0392b;"></span> Автоматические напоминания</div>
-    </div>
+                setStep('calculation');
+            };
 
-    <div class="note">
-        <strong>📌 Ключевые особенности:</strong>
-        <ul style="margin:8px 0 0 20px;">
-            <li>Перед диагностикой обязательное согласие с политикой.</li>
-            <li>На основе ответов рассчитывается примерный оборот и потенциал роста.</li>
-            <li>Персонализация под главную проблему пользователя.</li>
-            <li>Фильтр «готовность» отделяет тёплых лидов.</li>
-            <li>После отправки контакта выдаётся чек-лист и домашнее задание для подготовки к созвону.</li>
-            <li>Все данные (роль, клиенты, чек, проблема, учёт, телефон) передаются в CRM/Google Sheets.</li>
-        </ul>
-    </div>
+            const getProblemText = () => {
+                const prob = answers.problem?.tag;
+                if (prob === 'problem_retention') return "Основная точка роста — система удержания. Без неё даже сильный поток клиентов не создаёт стабильности.";
+                if (prob === 'problem_price') return "Рост дохода невозможен без работы с позиционированием и ценностью. Страх мешает вам забирать свои деньги.";
+                if (prob === 'problem_unstable') return "Хаос в записи — это отсутствие управляемого маркетинга. Система сделает поток клиентов прогнозируемым.";
+                return "Ваш текущий подход требует оцифровки. Только понимая цифры, можно управлять результатом.";
+            };
 
-    <div class="footer">
-        ⚙️ Техническая реализация: aiogram 3, SQLite, APScheduler, JSON-файл с текстами, интеграция с Google Sheets.<br>
-        ✨ Редактирование текстов и таймеров без перепрошивки.
-    </div>
-</div>
+            const ScreenWrapper = ({ children, title, icon: Icon }) => (
+                <div className="flex flex-col h-[600px] bg-slate-50 max-w-md mx-auto overflow-hidden shadow-2xl rounded-3xl border border-slate-200">
+                    <div className="bg-white p-4 border-b flex items-center gap-3">
+                        {Icon && <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600"><Icon size={20} /></div>}
+                        <h1 className="font-bold text-slate-800 text-sm uppercase tracking-wider">{title || "Валерий | Система Дохода"}</h1>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-6 space-y-4">
+                        {children}
+                    </div>
+                </div>
+            );
 
-<script>
-    mermaid.initialize({
-        startOnLoad: true,
-        theme: 'neutral',
-        flowchart: {
-            useMaxWidth: false,
-            htmlLabels: true,
-            curve: 'basis'
-        },
-        securityLevel: 'loose',
-    });
-</script>
+            return (
+                <div className="min-h-screen flex items-center justify-center font-sans text-slate-900">
+                    {/* Согласие */}
+                    {step === 'agreement' && (
+                        <ScreenWrapper title="Юридическая часть" icon={ShieldCheck}>
+                            <div className="bg-indigo-600 text-white p-6 rounded-2xl mb-4">
+                                <h2 className="text-xl font-bold mb-2">Начнем правильно</h2>
+                                <p className="text-indigo-100 text-sm">Продолжая, вы соглашаетесь на обработку персональных данных и получение материалов.</p>
+                            </div>
+                            <button 
+                                onClick={() => setStep('welcome')}
+                                className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl transition-all shadow-lg active:scale-95"
+                            >
+                                Согласен(на)
+                            </button>
+                            <button className="w-full text-slate-400 text-xs py-2">Политика конфиденциальности</button>
+                        </ScreenWrapper>
+                    )}
+
+                    {/* Приветствие */}
+                    {step === 'welcome' && (
+                        <ScreenWrapper title="Приветствие" icon={MessageSquare}>
+                            <div className="space-y-4">
+                                <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                                    <p className="mb-3">Привет. Я <b>Валерий</b>.</p>
+                                    <p className="text-slate-600 leading-relaxed">Помогаю косметологам выстраивать систему дохода, чтобы бизнес перестал зависеть от настроения клиентов и алгоритмов соцсетей.</p>
+                                </div>
+                                <div className="bg-indigo-50 p-4 rounded-xl border border-indigo-100">
+                                    <p className="text-indigo-800 text-sm font-medium italic">За 2–3 минуты покажу, где именно в вашем бизнесе теряются деньги.</p>
+                                </div>
+                                <button 
+                                    onClick={() => setStep('diagnostic')}
+                                    className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2"
+                                >
+                                    Пройти мини-диагностику <ChevronRight size={18}/>
+                                </button>
+                            </div>
+                        </ScreenWrapper>
+                    )}
+
+                    {/* Диагностика */}
+                    {step === 'diagnostic' && (
+                        <ScreenWrapper title={`Вопрос ${diagStep + 1} из 5`} icon={Layout}>
+                            <div className="w-full bg-slate-200 h-1.5 rounded-full mb-6">
+                                <div 
+                                    className="bg-indigo-600 h-1.5 rounded-full transition-all duration-500" 
+                                    style={{ width: `${((diagStep + 1) / questions.length) * 100}%` }}
+                                ></div>
+                            </div>
+                            <h2 className="text-lg font-bold text-slate-800 mb-6">{questions[diagStep].text}</h2>
+                            <div className="space-y-3">
+                                {questions[diagStep].options.map((opt, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => handleAnswer(opt)}
+                                        className="w-full text-left p-4 rounded-xl border-2 border-slate-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all bg-white font-medium"
+                                    >
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
+                        </ScreenWrapper>
+                    )}
+
+                    {/* Расчёт */}
+                    {step === 'calculation' && (
+                        <ScreenWrapper title="Ваш результат" icon={BarChart3}>
+                            <div className="space-y-4">
+                                <div className="bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
+                                    <p className="text-slate-400 text-xs uppercase tracking-widest mb-2">Текущий оборот</p>
+                                    <div className="text-3xl font-bold mb-4">{calculation.current} ₽ <span className="text-sm font-normal text-slate-500">/мес</span></div>
+                                    <div className="h-px bg-slate-800 my-4"></div>
+                                    <p className="text-indigo-400 text-xs uppercase tracking-widest mb-2">Потенциал роста</p>
+                                    <div className="text-2xl font-bold text-green-400">+{calculation.loss} ₽</div>
+                                    <p className="text-slate-400 text-xs mt-1">Это деньги, которые вы теряете без системы</p>
+                                </div>
+
+                                <div className="bg-white p-5 rounded-2xl border border-slate-200">
+                                    <p className="text-sm text-slate-700 leading-relaxed">
+                                        {getProblemText()}
+                                    </p>
+                                </div>
+
+                                <div className="p-4 bg-amber-50 rounded-xl border border-amber-100 flex gap-3 items-start">
+                                    <Video className="text-amber-600 shrink-0" size={20}/>
+                                    <div>
+                                        <p className="text-sm font-bold text-amber-900">Разбор системы</p>
+                                        <p className="text-xs text-amber-800">Я подготовил короткое видео, где объясняю, как из хаоса выстраивается система.</p>
+                                    </div>
+                                </div>
+
+                                <button 
+                                    onClick={() => setStep('filter')}
+                                    className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg"
+                                >
+                                    Посмотреть разбор
+                                </button>
+                            </div>
+                        </ScreenWrapper>
+                    )}
+
+                    {/* Фильтр готовности */}
+                    {step === 'filter' && (
+                        <ScreenWrapper title="Проверка готовности" icon={UserCheck}>
+                            <div className="space-y-4">
+                                <h2 className="text-lg font-bold">Системный рост требует внедрения.</h2>
+                                <p className="text-slate-600">Готовы ли вы:</p>
+                                <ul className="space-y-2 text-sm text-slate-700">
+                                    <li className="flex items-center gap-2 font-medium">✅ Считать цифры</li>
+                                    <li className="flex items-center gap-2 font-medium">✅ Внедрять изменения 3–4 недели</li>
+                                    <li className="flex items-center gap-2 font-medium">✅ Работать с процессами</li>
+                                </ul>
+
+                                <div className="pt-4 space-y-3">
+                                    <button 
+                                        onClick={() => setStep('strategy')}
+                                        className="w-full bg-indigo-600 text-white font-bold py-4 rounded-xl"
+                                    >
+                                        Да, готов(а)
+                                    </button>
+                                    <button 
+                                        onClick={() => setStep('finish_later')}
+                                        className="w-full bg-white border border-slate-200 text-slate-600 font-bold py-4 rounded-xl"
+                                    >
+                                        Пока изучаю
+                                    </button>
+                                </div>
+                            </div>
+                        </ScreenWrapper>
+                    )}
+
+                    {/* Стратегическая диагностика */}
+                    {step === 'strategy' && (
+                        <ScreenWrapper title="Приглашение" icon={MessageSquare}>
+                            <div className="space-y-4">
+                                <div className="bg-indigo-50 p-6 rounded-2xl border border-indigo-100">
+                                    <h2 className="text-indigo-900 font-bold mb-2 text-lg">Вижу потенциал роста</h2>
+                                    <p className="text-indigo-800 text-sm">Предлагаю провести 15–20 минутную стратегическую диагностику в Zoom. Разберём вашу ситуацию детально.</p>
+                                </div>
+                                
+                                <div className="p-4 space-y-3">
+                                    <p className="text-xs text-slate-500 text-center uppercase tracking-widest">Оставьте контакт для связи</p>
+                                    <button 
+                                        onClick={() => setStep('finish')}
+                                        className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg"
+                                    >
+                                        <Phone size={18}/> Отправить контакт
+                                    </button>
+                                </div>
+                            </div>
+                        </ScreenWrapper>
+                    )}
+
+                    {/* Финиш */}
+                    {step === 'finish' && (
+                        <ScreenWrapper title="Успешно" icon={ShieldCheck}>
+                            <div className="text-center py-8 space-y-6">
+                                <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
+                                    <UserCheck size={40}/>
+                                </div>
+                                <div>
+                                    <h2 className="text-2xl font-bold text-slate-800">Контакт получен!</h2>
+                                    <p className="text-slate-500 mt-2">Скоро свяжусь с вами для назначения Zoom.</p>
+                                </div>
+                                
+                                <div className="bg-white border p-4 rounded-xl text-left shadow-sm">
+                                    <p className="text-xs font-bold text-indigo-600 uppercase mb-2">Ваш бонус:</p>
+                                    <p className="text-sm font-medium">🎁 Чек-лист «Контроль системы дохода косметолога»</p>
+                                </div>
+
+                                <div className="bg-amber-50 p-4 rounded-xl text-left border border-amber-100">
+                                    <p className="text-xs font-bold text-amber-700 uppercase mb-2">Домашнее задание:</p>
+                                    <ul className="text-xs text-amber-900 space-y-1">
+                                        <li>• Уникальные клиенты за 3 мес.</li>
+                                        <li>• Кол-во повторных визитов</li>
+                                        <li>• Точный средний чек</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </ScreenWrapper>
+                    )}
+
+                    {/* Мягкий отказ */}
+                    {step === 'finish_later' && (
+                        <ScreenWrapper title="До связи" icon={MessageSquare}>
+                            <div className="space-y-6 text-center py-8">
+                                <p className="text-slate-600">Хорошо! Информации для размышления достаточно. Оставайтесь в канале, я буду делиться кейсами и механикой системы.</p>
+                                <button 
+                                   onClick={() => setStep('welcome')}
+                                   className="text-indigo-600 font-bold"
+                                >
+                                    Вернуться в начало
+                                </button>
+                            </div>
+                        </ScreenWrapper>
+                    )}
+                </div>
+            );
+        }
+
+        ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+    </script>
 </body>
-  </html>
+</html>
